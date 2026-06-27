@@ -1,1 +1,9 @@
 go 1.26.3
+
+use (
+	./services/auth-service
+	./services/campaign-service
+	./services/donation-service
+	./services/notification-service
+	./shared
+)
