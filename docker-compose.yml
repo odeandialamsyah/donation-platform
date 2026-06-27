@@ -1,0 +1,76 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: donation_mysql
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: 
+      MYSQL_DATABASE: donation_platform
+
+    ports:
+      - "3306:3306"
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    networks:
+      - donation-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: donation_redis
+
+    restart: unless-stopped
+
+    ports:
+      - "6379:6379"
+
+    networks:
+      - donation-network
+
+  rabbitmq:
+    image: rabbitmq:4-management
+
+    container_name: donation_rabbitmq
+
+    restart: unless-stopped
+
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+    networks:
+      - donation-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+
+    container_name: donation_phpmyadmin
+
+    restart: unless-stopped
+
+    ports:
+      - "8080:80"
+
+    environment:
+      PMA_HOST: mysql
+
+    depends_on:
+      - mysql
+
+    networks:
+      - donation-network
+
+volumes:
+  mysql_data:
+
+networks:
+  donation-network:
+    driver: bridge
