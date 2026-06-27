@@ -58,3 +58,30 @@ func (s *AuthService) Register(name, email, password string) (string, string, er
 
 	return accessToken, refreshToken, nil
 }
+
+func (s *AuthService) Login(email, password string) (string, string, error) {
+
+	user, err := s.UserRepo.FindByEmail(email)
+	if err != nil {
+		return "", "", errors.New("invalid email or password")
+	}
+
+	// cek password
+	if !auth.CheckPassword(user.Password, password) {
+		return "", "", errors.New("invalid email or password")
+	}
+
+	// generate access token
+	accessToken, err := s.JWT.GenerateAccessToken(user.ID, user.Role)
+	if err != nil {
+		return "", "", err
+	}
+
+	// generate refresh token
+	refreshToken, err := s.JWT.GenerateRefreshToken(user.ID)
+	if err != nil {
+		return "", "", err
+	}
+
+	return accessToken, refreshToken, nil
+}

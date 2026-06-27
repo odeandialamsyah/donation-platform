@@ -24,6 +24,7 @@ func Setup(db *gorm.DB, cfg *config.Config) *gin.Engine {
 
 	r.GET("/health", healthHandler.Health)
 	r.POST("/api/auth/register", authHandler.Register)
+	r.POST("/api/auth/login", authHandler.Login)
 
 	return r
 }

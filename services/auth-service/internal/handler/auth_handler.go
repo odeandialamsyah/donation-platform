@@ -37,3 +37,24 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		RefreshToken: refreshToken,
 	})
 }
+
+func (h *AuthHandler) Login(c *gin.Context) {
+
+	var req request.LoginRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.RespondErrorStatus(c, 400, err.Error())
+		return
+	}
+
+	accessToken, refreshToken, err := h.Service.Login(req.Email, req.Password)
+	if err != nil {
+		response.RespondErrorStatus(c, 401, err.Error())
+		return
+	}
+
+	response.RespondSuccess(c, "Login success", gin.H{
+		"access_token":  accessToken,
+		"refresh_token": refreshToken,
+	})
+}
